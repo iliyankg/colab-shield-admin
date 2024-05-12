@@ -1,9 +1,12 @@
 annotated-types==0.6.0
 blinker==1.8.1
+certifi==2024.2.2
+charset-normalizer==3.3.2
 click==8.1.7
 exceptiongroup==1.2.1
 flask==3.0.3
 Flask-Login==0.6.3
+idna==3.7
 importlib-metadata==7.1.0
 iniconfig==2.0.0
 itsdangerous==2.2.0
@@ -15,7 +18,9 @@ pydantic==2.7.1
 pydantic-core==2.18.2
 pytest==8.2.0
 python-dotenv==1.0.1
+requests==2.31.0
 tomli==2.0.1
 typing-extensions==4.11.0
+urllib3==2.2.1
 werkzeug==3.0.2
 zipp==3.18.1

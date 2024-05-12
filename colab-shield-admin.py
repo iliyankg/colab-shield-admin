@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from flask_login import LoginManager, login_required
-from models import User
+from models import User, FileInfo
+from backend import BackendConn
 import uuid
 
 app = Flask(__name__)
@@ -16,14 +17,32 @@ def load_user(user_id: str) -> User:
     return User(id=uuid.uuid4())
 
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Login page"""
+    return render_template("login.html")
+
+# @app.route("/api/login", methods=["POST"])
+# def api_login():
+#     """API endpoint for login"""
+    
+
+
 @app.route("/")
-@login_required
+# @login_required
 def index():
     """Home page"""
     return render_template("home.html")
 
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    """Login page"""
-    return render_template("login.html")
+@app.route("/project/<project_id>")
+# @login_required
+def project(project_id):
+    """Project page"""
+    backend_conn = BackendConn("host:1338")
+    response = backend_conn.get_files_for_project(project_id)
+
+    files = [FileInfo(**file.model_dump()) for file in response.files]
+
+    return render_template("project.html", project_id=project_id,
+                           num_entries=len(files), entries=files)
