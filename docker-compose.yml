@@ -1,0 +1,35 @@
+version: '3'
+
+networks:
+  internal:
+    driver: bridge
+
+services:
+  redis:
+    # Use the official image for Redis with ReJSON support.
+    image: redis/redis-stack:latest
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=redis
+    ports:
+      - 6379:6379
+      - 8001:8001
+    networks: 
+      - internal
+
+  backend:
+    image: newlian/colab-shield:main
+    environment:
+      - COLABSHIELD_GRPC_PORT=1337
+      - COLABSHIELD_HTTP_PORT=1338
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=redis
+      - GIN_MODE=debug
+    depends_on:
+      - redis
+    ports:
+      - 1337:1337
+      - 1338:1338
+    networks:
+      - internal
