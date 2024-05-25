@@ -25,7 +25,6 @@ def login():
 # @app.route("/api/login", methods=["POST"])
 # def api_login():
 #     """API endpoint for login"""
-    
 
 
 @app.route("/")
@@ -39,10 +38,13 @@ def index():
 # @login_required
 def project(project_id):
     """Project page"""
-    backend_conn = BackendConn("host:1338")
-    response = backend_conn.get_files_for_project(project_id)
-
-    files = [FileInfo(**file.model_dump()) for file in response.files]
+    backend_conn = BackendConn("localhost:1338")
+    try:
+        response = backend_conn.get_files_for_project(project_id)
+        files = [FileInfo(**file.model_dump()) for file in response.files]
+    except Exception as e:
+        return render_template("project.html", project_id=project_id,
+                               num_entries=0, error=str(e))
 
     return render_template("project.html", project_id=project_id,
                            num_entries=len(files), entries=files)
