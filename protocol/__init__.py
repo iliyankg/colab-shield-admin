@@ -1,3 +1,3 @@
 from .protocol import ClaimMode
-from .protocol import FileInfo
+from .protocol import FileInfoResponse
 from .protocol import ListFilesResponse

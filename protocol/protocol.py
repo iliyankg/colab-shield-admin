@@ -1,4 +1,5 @@
 from enum import IntEnum
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -10,16 +11,16 @@ class ClaimMode(IntEnum):
     SHARED = 2
 
 
-class FileInfo(BaseModel):
+class FileInfoResponse(BaseModel):
     """File information model for tracking and managing files."""
-    file_id: str = Field(serialization_alias="fileId")
-    file_hash: str = Field(serialization_alias="fileHash")
-    user_ids: int = Field(serialization_alias="userIds")
-    branch_name: str = Field(serialization_alias="branchName")
-    claim_mode: ClaimMode = Field(serialization_alias="claimMode")
+    file_id: str = Field(alias="fileId")
+    file_hash: str = Field(alias="fileHash")
+    user_ids: List[str] = Field(alias="userIds")
+    branch_name: str = Field(alias="branchName")
+    claim_mode: ClaimMode = Field(alias="claimMode")
 
 
 class ListFilesResponse(BaseModel):
     """Response model for listing files."""
-    nextCursor: int = Field(serialization_alias="nextCursor")
-    files: list[FileInfo] = Field(serialization_alias="files")
+    nextCursor: int = Field(alias="nextCursor")
+    files: List[FileInfoResponse] = Field(alias="files")

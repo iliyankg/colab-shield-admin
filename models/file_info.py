@@ -1,4 +1,5 @@
 from enum import IntEnum
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -12,8 +13,8 @@ class ClaimMode(IntEnum):
 
 class FileInfo(BaseModel):
     """File information model for tracking and managing files."""
-    file_id: str = Field(serialization_alias="fileId")
-    file_hash: str = Field(serialization_alias="fileHash")
-    user_ids: int = Field(serialization_alias="userIds")
-    branch_name: str = Field(serialization_alias="branchName")
-    claim_mode: ClaimMode = Field(serialization_alias="claimMode")
+    file_id: str
+    file_hash: str
+    user_ids: List[str]
+    branch_name: str
+    claim_mode: ClaimMode
