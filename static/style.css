@@ -34,3 +34,10 @@ body {
     border-radius: 4px;
     cursor: pointer;
 }
+.error-message {
+    background-color: #ffcccc;
+    color: #ff0000;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}

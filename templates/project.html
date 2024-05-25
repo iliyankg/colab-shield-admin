@@ -5,29 +5,33 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Project {{ projectId }}</h1>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>File ID</th>
-                <th>File Hash</th>
-                <th>User IDs</th>
-                <th>Branch Name</th>
-                <th>Claim Mode</th>
-            </tr>
-        </thead>
-        <tbody>
-            {%for i in range(0, num_entries)%}
+    <h1>Project {{ project_id }}</h1>
+    {% if error %}
+        <p class="error-message">Error: {{ error }}</p>
+    {% else %}
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ entries[i].file_id }}</td>
-                    <td>{{ entries[i].file_hash }}</td>
-                    <td>{{ entries[i].user_ids }}</td>
-                    <td>{{ entries[i].branch_name }}</td>
-                    <td>{{ entries[i].claim_mode }}</td>
+                    <th>File ID</th>
+                    <th>File Hash</th>
+                    <th>User IDs</th>
+                    <th>Branch Name</th>
+                    <th>Claim Mode</th>
                 </tr>
-            {%endfor%}
-        </tbody>
+            </thead>
+            <tbody>
+                {% for i in range(0, num_entries) %}
+                    <tr>
+                        <td>{{ entries[i].file_id }}</td>
+                        <td>{{ entries[i].file_hash }}</td>
+                        <td>{{ entries[i].user_ids }}</td>
+                        <td>{{ entries[i].branch_name }}</td>
+                        <td>{{ entries[i].claim_mode }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
     </table>
 </body>
 </html>
