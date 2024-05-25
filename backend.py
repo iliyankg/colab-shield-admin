@@ -14,6 +14,7 @@ class BackendConn:
                               project_id: str,
                               cursor: int = 0,
                               pageSize: int = 100) -> protocol.ListFilesResponse:
+        # FIXME: User here should come from the flask login
         result = requests.get(
             url=f"http://{self._address}/project/{project_id}/files",
             params={"cursor": cursor, "pageSize": pageSize},
