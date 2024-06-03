@@ -1,7 +1,7 @@
 from enum import IntEnum
 from typing import List
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 
 
 class ClaimMode(IntEnum):
@@ -24,3 +24,8 @@ class ListFilesResponse(BaseModel):
     """Response model for listing files."""
     nextCursor: int = Field(alias="nextCursor")
     files: List[FileInfoResponse] = Field(alias="files")
+
+
+class CreateAccountRequest(BaseModel):
+    """Request model for creating an account."""
+    email: EmailStr
