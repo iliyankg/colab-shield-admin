@@ -58,6 +58,7 @@ def api_register():
     with rc.pipeline() as pipe:
         pipe.set(user.email, str(user.id))
         pipe.json().set(str(user.id), Path.root_path(), user.model_dump())
+        pipe.execute()
 
     # Return response
     return jsonify({"status": "success", "user_id": str(user.id)})
