@@ -24,8 +24,3 @@ class ListFilesResponse(BaseModel):
     """Response model for listing files."""
     nextCursor: int = Field(alias="nextCursor")
     files: List[FileInfoResponse] = Field(alias="files")
-
-
-class CreateAccountRequest(BaseModel):
-    """Request model for creating an account."""
-    email: EmailStr

@@ -2,12 +2,12 @@ from typing import Optional
 
 from redis import Redis
 from redis.commands.json.path import Path
-from flask import Flask, current_user, request, url_for, redirect, jsonify, render_template
-from flask_login import LoginManager, login_required, login_user
+from flask import Flask, request, url_for, redirect, jsonify, render_template
+from flask_login import LoginManager, current_user, login_required, login_user
 from pydantic import ValidationError
 from models import User, FileInfo
-from protocol import CreateAccountRequest
 from backend import BackendConn
+from forms import LoginForm, CreateAccountForm
 
 
 app = Flask(__name__)
@@ -33,35 +33,34 @@ def load_user(user_id: str) -> Optional[User]:
         return None  # TODO: logging
 
 
-@app.route("/api/register", methods=["POST"])
-def api_register():
-    """API endpoint for registration"""
-    # Validate request
-    try:
-        create_account_request = CreateAccountRequest.model_validate(
-            request.json)
-    except ValidationError as e:
-        return {"error": str(e)}, 400
+@app.route("/create_account", methods=["GET", "POST"])
+def create_account():
+    """Create Account page"""
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
 
-    # Check if user already exists
-    user = rc.get(create_account_request.email)
-    if user:
-        return {"error": "User already exists"}, 409
+    form = CreateAccountForm()
+    if form.validate_on_submit():
+        # Check if user already exists
+        user = rc.get(form.email.data)
+        if user:
+            return {"error": "User already exists"}, 409
 
-    # Create user
-    try:
-        user = User.create_user(create_account_request.email)
-    except Exception as e:
-        return {"error": str(e)}, 500
+        # Create user
+        try:
+            user = User.create_user(form.email.data)
+        except Exception as e:
+            return {"error": str(e)}, 500
 
-    # Save user
-    with rc.pipeline() as pipe:
-        pipe.set(user.email, str(user.id))
-        pipe.json().set(str(user.id), Path.root_path(), user.model_dump())
-        pipe.execute()
+        # Save user
+        with rc.pipeline() as pipe:
+            pipe.set(user.email, str(user.id))
+            pipe.json().set(str(user.id), Path.root_path(), user.model_dump())
+            pipe.execute()
 
-    # Return response
-    return jsonify({"status": "success", "user_id": str(user.id)})
+        return redirect(url_for('login'))
+
+    return render_template("create_account.html", form=form)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -70,29 +69,28 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
-    email = request.form.get('email')  # TODO: Add validation
-    if not email:
-        # TODO: Add error and logging
-        return render_template("login.html")
+    form = LoginForm()
+    if form.validate_on_submit():
+        user_id = rc.get(form.email.data)
+        if not user_id:
+            # TODO: Add errror and loggin
+            return redirect(url_for("create_account"))
 
-    user_id = rc.get(email)
-    if not user_id:
-        # TODO: Add errror and loggin
-        return render_template("login.html")
+        user = rc.json().get(str(user_id))
+        if not user:
+            # TODO: Add errror and loggin
+            return render_template("login.html", form=form)
 
-    user = rc.json().get(str(user_id))
-    if not user:
-        # TODO: Add errror and loggin
-        return render_template("login.html")
+        try:
+            user = User.model_validate(user)
+        except ValidationError as e:
+            # TODO: Add errror and loggin
+            return render_template("login.html", form=form)
 
-    try:
-        user = User.model_validate(user)
-    except ValidationError as e:
-        # TODO: Add errror and loggin
-        return render_template("login.html")
+        login_user(user, remember=True)
+        return redirect(url_for('index'))
 
-    login_user(user, remember=True)
-    return redirect(url_for('index'))
+    return render_template("login.html", form=form)
 
 
 @app.route("/")

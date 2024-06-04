@@ -4,9 +4,12 @@ blinker==1.8.1
 certifi==2024.2.2
 charset-normalizer==3.3.2
 click==8.1.7
+dnspython==2.6.1
+email-validator==2.1.1
 exceptiongroup==1.2.1
 flask==3.0.3
 Flask-Login==0.6.3
+flask-wtf==1.2.1
 idna==3.7
 importlib-metadata==7.1.0
 iniconfig==2.0.0
@@ -25,4 +28,5 @@ tomli==2.0.1
 typing-extensions==4.11.0
 urllib3==2.2.1
 werkzeug==3.0.2
+wtforms==3.1.2
 zipp==3.18.1
