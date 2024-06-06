@@ -8,6 +8,7 @@ class LoginForm(FlaskForm):
     email = EmailField("Email", validators=[DataRequired(), Email()])
     submit = SubmitField("Login")
 
+
 class CreateAccountForm(FlaskForm):
     """Form for creating an account"""
     email = EmailField("Email", validators=[DataRequired(), Email()])
