@@ -9,6 +9,7 @@
         {% block content %}
         <h2>Create Account</h2>
         <form action="" method="post">
+            {{ form.csrf_token }}
             <div class="form-group">
                 {{ form.email.label }}
                 {{ form.email(size=50) }}
