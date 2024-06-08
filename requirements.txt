@@ -24,6 +24,7 @@ pytest==8.2.0
 python-dotenv==1.0.1
 redis==5.0.4
 requests==2.31.0
+structlog==24.2.0
 tomli==2.0.1
 typing-extensions==4.11.0
 urllib3==2.2.1

@@ -1,13 +1,28 @@
+import structlog
 from typing import Optional
-
 from redis import Redis
 from redis.commands.json.path import Path
+
 from flask import Flask, request, url_for, redirect, jsonify, render_template
 from flask_login import LoginManager, current_user, login_required, login_user
+
 from pydantic import ValidationError
+
 from models import User, FileInfo
 from backend import BackendConn
 from forms import LoginForm, CreateAccountForm
+
+structlog.configure(
+    processors=[
+        structlog.processors.JSONRenderer(),
+        structlog.contextvars.merge_contextvars,
+        structlog.processors.add_log_level,
+        structlog.dev.set_exc_info,
+        structlog.processors.TimeStamper(fmt="iso", utc=False),
+        structlog.dev.ConsoleRenderer()
+    ]
+)
+logger = structlog.get_logger()
 
 
 app = Flask(__name__)
@@ -23,6 +38,7 @@ backend_conn = BackendConn(url='http://localhost:1338')  # type: ignore
 
 @flask_login.user_loader
 def load_user(user_id: str) -> Optional[User]:
+    """Load user from Redis."""
     user = rc.json().get(user_id)
     if user is None:
         return None  # TODO: logging
@@ -109,7 +125,6 @@ def index():
 @login_required
 def project(project_id):
     """Project page"""
-
     try:
         response = backend_conn.get_files_for_project(
             current_user.get_id(), project_id)
