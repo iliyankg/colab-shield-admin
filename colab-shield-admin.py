@@ -42,17 +42,11 @@ def create_account():
     print("about to validate form")
 
     form = CreateAccountForm(request.form)
-    print(str(form.email.data))
-    print(str(request.form))
-    print(form.is_submitted(), form.validate())
     if form.validate_on_submit():
-        print("form validated")
         # Check if user already exists
         user = rc.get(form.email.data)
         if user:
             return {"error": "User already exists"}, 409
-
-        print("user already exists")
 
         # Create user
         try:
@@ -60,15 +54,12 @@ def create_account():
         except Exception as e:
             return {"error": str(e)}, 500
 
-        print("created a user")
-
         # Save user
         with rc.pipeline() as pipe:
+            # TODO: These keys should be namespaced
             pipe.set(user.email, str(user.id))
             pipe.json().set(str(user.id), Path.root_path(), user.model_dump())
             pipe.execute()
-
-        print("saved user")
 
         return redirect(url_for('login'))
     else:
