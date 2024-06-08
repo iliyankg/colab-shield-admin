@@ -18,6 +18,11 @@
                 {{ form.submit() }}
             </div>
         </form>
+        {% for field in form.errors %}
+            {% for error in form.errors[field] %}
+                <p class="error-message">{{ error }}</p>
+            {% endfor %}            
+        {% endfor %}
         {% endblock %}
     </div>
 </body>

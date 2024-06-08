@@ -41,12 +41,14 @@ def load_user(user_id: str) -> Optional[User]:
     """Load user from Redis."""
     user = rc.json().get(user_id)
     if user is None:
-        return None  # TODO: logging
+        logger.warning("user not found", user_id=user_id)
+        return None
 
     try:
         return User.model_validate(user)
     except ValidationError as e:
-        return None  # TODO: logging
+        logger.error("failed to validate user mdoel", user_id=user_id)
+        return None
 
 
 @app.route("/create_account", methods=["GET", "POST"])
@@ -90,12 +92,12 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
-    form = LoginForm()
+    form = LoginForm(rc, request.form)
     if form.validate_on_submit():
         user_id = rc.get(form.email.data)
         if not user_id:
-            # TODO: Add errror and loggin
-            return redirect(url_for("create_account"))
+            return render_template("login.html", email_not_found=True, form=form)
+            # return redirect(url_for("create_account"))
 
         user = rc.json().get(str(user_id))
         if not user:
