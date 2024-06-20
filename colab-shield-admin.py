@@ -32,7 +32,7 @@ flask_login = LoginManager(app)
 flask_login.login_view = "login"  # type: ignore
 
 # TODO: Move following to config
-rc = Redis(host='127.0.0.1', port=6379, db=0)
+rc = Redis(host='127.0.0.1', port=6379, db=0, decode_responses=True)
 backend_conn = BackendConn(url='http://localhost:1338')  # type: ignore
 
 
@@ -97,7 +97,6 @@ def login():
         user_id = rc.get(form.email.data)
         if not user_id:
             return render_template("login.html", email_not_found=True, form=form)
-            # return redirect(url_for("create_account"))
 
         user = rc.json().get(str(user_id))
         if not user:
