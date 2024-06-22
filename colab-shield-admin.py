@@ -14,12 +14,11 @@ from forms import LoginForm, CreateAccountForm
 
 structlog.configure(
     processors=[
-        structlog.processors.JSONRenderer(),
         structlog.contextvars.merge_contextvars,
         structlog.processors.add_log_level,
         structlog.dev.set_exc_info,
         structlog.processors.TimeStamper(fmt="iso", utc=False),
-        structlog.dev.ConsoleRenderer()
+        structlog.processors.JSONRenderer(),
     ]
 )
 logger = structlog.get_logger()
